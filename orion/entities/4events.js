@@ -26,6 +26,17 @@ orion.addEntity('events', {
     }, {
         publicationName: 'eventshostadmin'
     }),
+    privacy: {
+        type: String,
+        autoform: {
+            noselect: true,
+            options: {
+                'public': 'Public: Anyone can join the event',
+                'open-invite': 'Open Invite: Anyone invited can invite other friends by email',
+                'invite-only': 'Invite Only: Only the event admins (hosts) can invite additional people',
+            }
+        }
+    },
     location: {
         type: String,
     },
@@ -45,6 +56,27 @@ orion.addEntity('events', {
             }
         }
     },
+    invitations: orion.attribute('hasMany', {
+        label: 'Invitations',
+        optional: true,
+    }, {
+        entity: 'emails',
+        titleField: 'email',
+        publicationName: 'eventsEmailsPub',
+        createFilter: function(input) {
+            var match, regex;
+            regex = SimpleSchema.RegEx.Email;
+            match = input.match(regex);
+            if (match) return !this.options.hasOwnProperty(match[0]);
+            return false;
+        },
+        create: function(input) {
+            var newEmail = { email: input };
+            var emailId = orion.entities.emails.collection.insert(newEmail);
+            newEmail._id = emailId;
+            return newEmail;
+        }
+    })
 }, {
     icon: 'calendar-o',
     sidebarName: 'Events',

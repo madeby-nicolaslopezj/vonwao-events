@@ -20,6 +20,17 @@ orion.addEntity('groups', {
             return { admins: userId };
         }
     }),
+    privacy: {
+        type: String,
+        autoform: {
+            noselect: true,
+            options: {
+                'public': 'Public: Anyone can join',
+                'open-invite': 'Open Invite: Anyone invited can invite other friends by email',
+                'invite-only': 'Invite Only: Only the communities admins can add additional people',
+            }
+        }
+    },
     subscribers: orion.attribute('users', {
         label: 'Subscribers',
         optional: true,
