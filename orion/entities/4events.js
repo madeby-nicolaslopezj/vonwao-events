@@ -76,6 +76,18 @@ orion.addEntity('events', {
             newEmail._id = emailId;
             return newEmail;
         }
+    }),
+    rsvpYes: orion.attribute('users', {
+        label: 'RSVP Yes',
+        optional: true,
+    }, {
+        publicationName: 'acceptedUsersPub'
+    }),
+    rsvpNo: orion.attribute('users', {
+        label: 'RSVP No',
+        optional: true,
+    }, {
+        publicationName: 'rejectedUsersPub'
     })
 }, {
     icon: 'calendar-o',
@@ -85,6 +97,9 @@ orion.addEntity('events', {
     tableColumns: [
         { data:'name', title: 'Name' },
         orion.attributeColumn('hasOne', 'group', 'Group'),
+        orion.attributeColumn('hasMany', 'invitations', 'Invitations'),
+        orion.attributeColumn('users', 'rsvpYes', 'RSVP Yes'),
+        orion.attributeColumn('users', 'rsvpNo', 'RSVP No'),
     ],
 });
 

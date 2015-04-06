@@ -15,6 +15,13 @@ Meteor.methods({
 		var email = orion.entities.emails.collection.findOne({ email: options.email });
 		var emailId = email && email._id;
 
+		// Check if the users has responded
+		if (email.userId) {
+			if (_.contains(event.rsvpYes, email.userId) || _.contains(event.rsvpNo, email.userId)) {
+				throw new Meteor.Error('user-has-responded', 'The user has responded to the invitation');
+			}
+		}
+
 		// Register the email if its not registered
 		if (!emailId) {
 			emailId = orion.entities.emails.collection.insert({ email: options.email });
@@ -35,6 +42,10 @@ Meteor.methods({
 					found = true;
 				}
 			});
+			// Check if the user has responded yes
+			if (_.contains(event.rsvpYes, this.userId)) {
+				found = true;
+			}
 			if (!found) {
 				throw new Meteor.Error('permissions-open-invite', 'Only invited people can invite to this event.');
 			}
