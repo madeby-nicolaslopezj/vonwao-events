@@ -1,4 +1,4 @@
-# Event Managment
+# Event Management
 A project made for @vonwao. The most complex orion proyect yet.
 
 ## Schema
@@ -33,6 +33,14 @@ To start to use the sistem do the following steps:
 - Create some public, open-invite and invite-only events.
 - Go to the home path and use the site.
 
+## Email Templates
+
+This proyect has a parser for email templates that replaces ```{{name}}``` to the value of ```event.name```. This makes email templates reusable
+
+**Notice**: This parser is not blaze, this just uses a string.replace, so we have some rules:
+
+- No spaces between braces. Like this ```{{name}}```, not like this ```{{ name }}```.
+- No functions, helpers, the parser will only recognize the attributes of the current event and a extra attribute,  ```url```.
 
 
 
