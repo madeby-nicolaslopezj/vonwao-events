@@ -1,4 +1,4 @@
-# Event Managment
+# Event Management
 A project made for @vonwao. The most complex orion proyect yet.
 
 ## Schema
