@@ -22,6 +22,19 @@ Meteor.startup(function () {
 	});
 });
 
+Router.route('/event/:_id', function(){
+	var router = this;
+	Meteor.call('getEventUrl', this.params._id, function(error, result) {
+		if (error) {
+			console.log(error);
+			alert(error.reason);
+		} else {
+			router.redirect(result);
+		}
+	})
+	this.render('adminLoading');
+}, { name: 'event.static' });
+
 /**
  * Send emails to invitees in the admin
  */

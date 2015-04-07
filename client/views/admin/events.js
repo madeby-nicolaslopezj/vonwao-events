@@ -20,5 +20,13 @@ Template.eventAdminActions.events({
 				alert(error.reason);
 			}
 		});
+	},
+	'click .duplicate-btn': function() {
+		Meteor.call('duplicateEvent', { eventId: this._id }, function(error, response) {
+			if (error) {
+				console.log(error);
+				alert(error.reason);
+			}
+		});
 	}
 });

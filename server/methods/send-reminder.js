@@ -38,7 +38,7 @@ Meteor.methods({
 		var reminderTemplate = orion.entities.emailTemplates.collection.findOne(event.reminderTemplate);
 
 		// We will add the url to the event object to use it in the email
-		event.url = event.getUrl();
+		event.url = event.getStaticUrl();
 		// Converts the template to html using the specified entity.
 		// Notice: this is not blaze, this just uses a string.replace, so we have some rules
 		// 1 - No spaces between braces. Like this: {{name}}

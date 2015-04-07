@@ -19,7 +19,7 @@ orion.entities.events.collection.after.update(function (userId, doc, fieldNames,
 	var invitationTemplate = orion.entities.emailTemplates.collection.findOne(doc.invitationTemplate);
 
 	// We will add the url to the event object to use it in the email
-	doc.url = doc.getUrl();
+	doc.url = doc.getStaticUrl();
 	// Converts the template to html using the specified entity.
 	// Notice: this is not blaze, this just uses a string.replace, so we have some rules
 	// 1 - No spaces between braces. Like this: {{name}}
@@ -58,7 +58,7 @@ orion.entities.events.collection.after.insert(function (userId, doc) {
 	var invitationTemplate = orion.entities.emailTemplates.collection.findOne(doc.invitationTemplate);
 
 	// We will add the url to the event object to use it in the email
-	doc.url = doc.getUrl();
+	doc.url = doc.getStaticUrl();
 	// Converts the template to html using the specified entity.
 	// Notice: this is not blaze, this just uses a string.replace, so we have some rules
 	// 1 - No spaces between braces. Like this: {{name}}
