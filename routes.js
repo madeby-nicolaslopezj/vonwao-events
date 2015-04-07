@@ -29,7 +29,7 @@ Router.route('/event/:_id', function(){
 			console.log(error);
 			alert(error.reason);
 		} else {
-			router.redirect(result);
+			window.location.replace(result);
 		}
 	})
 	this.render('adminLoading');
