@@ -1,6 +1,6 @@
-/**
- * This entity is to save emails
- */ 
+// In this entity we will save all the emails that we use in the system
+// If the email belongs to a user it should be automatically setted
+// We need this entity because we want to invite people that are not registered
 orion.addEntity('emails', {
     email: {
         type: String,
@@ -27,6 +27,7 @@ orion.addEntity('emails', {
 // null beacouse the client its automatically subscribed
 if (Meteor.isServer) {
     Meteor.publish(null, function() {
+        // publish my emails
         return orion.entities.emails.collection.find({ userId: this.userId });
     })
 }

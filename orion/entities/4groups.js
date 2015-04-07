@@ -1,3 +1,4 @@
+// Groups
 orion.addEntity('groups', {
     name: {
         type: String,
@@ -9,6 +10,7 @@ orion.addEntity('groups', {
         regEx: /^[a-z0-9A-Z_-]*$/,
         unique: true
     },
+    // Belongs to a community, this attribute is necesary
     community: orion.attribute('hasOne', {
         label: 'Community',
     }, {
@@ -30,6 +32,7 @@ orion.addEntity('groups', {
             }
         }
     },
+    // Subscribers of the group, they can be easily added to a event
     subscribers: orion.attribute('users', {
         label: 'Subscribers',
         optional: true,
@@ -50,32 +53,36 @@ orion.addEntity('groups', {
 
 if (Meteor.isClient) {
     // TODO: subscribe only to groups with permissions 
-    orion.admin.addAdminSubscription('entity', 'groups', {  });
+    orion.admin.addAdminSubscription('entity', 'groups', {});
 }
 
+// We are creating a custom admin permission
+// entity.groups.community-admin
+// Remember to add it to the community admins
 orion.users.permissions.createCustomEntityPermission({
     entity: 'groups',
     name: 'community-admin',
     indexFilter: function(userId) {
+        // only the groups that belong to the community that I own
         var communitiesIds = _.pluck(orion.entities.communities.collection.find({ admins: userId }).fetch(), '_id');
         return { community: { $in: communitiesIds } };
     },
     update: function(userId, doc, fields, modifier) {
+        // only the groups that belong to the community that I own
         var communitiesIds = _.pluck(orion.entities.communities.collection.find({ admins: userId }).fetch(), '_id');
         return _.contains(communitiesIds, doc.community);
     },
     create: function(userId, doc) {
+        // can only create if its admin to a community
         if (orion.entities.communities.collection.find({ admins: userId }).count()) {
             return true;
         }
         return false;
     },
     remove: function(userId, doc) {
+        // only the groups that belong to the community that I own
         var communitiesIds = _.pluck(orion.entities.communities.collection.find({ admins: userId }).fetch(), '_id');
         return _.contains(communitiesIds, doc.community);
-    },
-    fields: function(userId) {
-        return ['name', 'slug', 'privacy', 'subscribers'];
     }
 });
 
@@ -84,6 +91,7 @@ orion.entities.groups.collection.helpers({
         return this.privacy == 'public';
     },
     userIsSubscribed: function(userId) {
+        // check if the user is subscribed to the group
         return _.contains(this.subscribers, userId);
     }
 });

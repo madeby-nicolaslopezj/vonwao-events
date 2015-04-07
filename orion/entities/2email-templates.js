@@ -1,3 +1,11 @@
+// In this entity we will save the email templates
+// The content is editable with froala
+// In the editor you can write {{name}} and a parser
+// will change it to the event name - it works with all event
+// attributes plus "url".
+// Notice: this is not blaze, this just uses a string.replace, so we have some rules
+// 1 - No spaces between braces. Like this: {{name}}
+// 2 - No functions, helpers, the parser will only recognize the attributes of the current event
 orion.addEntity('emailTemplates', {
     name: {
         type: String,
@@ -30,6 +38,8 @@ orion.addEntity('emailTemplates', {
 
 orion.entities.emailTemplates.collection.helpers({
     getHtml: function(data) {
+        // Simple parser, will convert 
+        // {{name}} -> My event
         data = data || {};
         var html = this.content;
         _.keys(data).map(function(key) {

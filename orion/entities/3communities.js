@@ -1,3 +1,4 @@
+// Communities
 orion.addEntity('communities', {
     name: {
         type: String,
@@ -9,11 +10,12 @@ orion.addEntity('communities', {
         regEx: /^[a-z0-9A-Z_-]*$/,
         unique: true
     },
+    // The admin of the community can create groups and events
     admins: orion.attribute('users', {
         label: 'Admins',
         optional: true,
     }, {
-        publicationName: 'userajsneansk'
+        publicationName: 'userajsneansk' // It doesn't matter what we put here but it has to be unique
     }),
 }, {
     icon: 'users',

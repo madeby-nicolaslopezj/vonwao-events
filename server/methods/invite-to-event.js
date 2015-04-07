@@ -1,5 +1,6 @@
 Meteor.methods({
 	inviteToEvent: function (options) {
+		// We need the eventId and the email of the invited person
 		check(options, {
 			eventId: String,
 			email: String

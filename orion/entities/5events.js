@@ -1,3 +1,4 @@
+// Events, the main collection of this project
 orion.addEntity('events', {
     name: {
         type: String,
@@ -8,6 +9,7 @@ orion.addEntity('events', {
         regEx: /^[a-z0-9A-Z_-]*$/,
         unique: true
     },
+    // group is unique, the host cant change it
     group: orion.attribute('hasOne', {
         label: 'Group',
     }, {
@@ -20,6 +22,7 @@ orion.addEntity('events', {
             return { community: { $in: communitiesId } };
         }
     }),
+    // Host, can change some values and send reminders
     host: orion.attribute('user', {
         label: 'Host',
         optional: true,
@@ -37,6 +40,7 @@ orion.addEntity('events', {
             }
         }
     },
+    // To send emails when inviting someone
     invitationTemplate: orion.attribute('hasOne', {
         label: 'Invitation Email Template',
         optional: true,
@@ -49,6 +53,7 @@ orion.addEntity('events', {
             return { type: 'invitation' };
         }
     }),
+    // To send reminder emails
     reminderTemplate: orion.attribute('hasOne', {
         label: 'Reminder Email Template',
         optional: true,
@@ -80,6 +85,9 @@ orion.addEntity('events', {
             }
         }
     },
+    // Invitations, these are not users, there are emails entity
+    // Emails, becouse we can invite not registered people and
+    // we want to save them in a database
     invitations: orion.attribute('hasMany', {
         label: 'Invitations',
         optional: true,
@@ -101,12 +109,14 @@ orion.addEntity('events', {
             return newEmail;
         }
     }),
+    // Id of users that will go to the event, must be registered
     rsvpYes: orion.attribute('users', {
         label: 'RSVP Yes',
         optional: true,
     }, {
         publicationName: 'acceptedUsersPub'
     }),
+    // Id of users that said they will not go to the event
     rsvpNo: orion.attribute('users', {
         label: 'RSVP No',
         optional: true,
@@ -124,56 +134,69 @@ orion.addEntity('events', {
         orion.attributeColumn('hasMany', 'invitations', 'Invitations'),
         orion.attributeColumn('users', 'rsvpYes', 'RSVP Yes'),
         orion.attributeColumn('users', 'rsvpNo', 'RSVP No'),
+        // include the template named eventAdminActions here
         { tmpl: Meteor.isClient && Template.eventAdminActions, title: 'Actions' }
     ],
 });
 
+// We will create a permission for community admins
 orion.users.permissions.createCustomEntityPermission({
     entity: 'events',
     name: 'community-admin',
     indexFilter: function(userId) {
+        // They can see the events that belongs to the community > group that they are admins
         var communitiesIds = _.pluck(orion.entities.communities.collection.find({ admins: userId }).fetch(), '_id');
         var groupsIds = _.pluck(orion.entities.groups.collection.find({ community: { $in: communitiesIds } }).fetch(), '_id');
         return { group: { $in: groupsIds } };
     },
     update: function(userId, doc, fields, modifier) {
+        // They can edit the events that belongs to the community > group that they are admins
         var communitiesIds = _.pluck(orion.entities.communities.collection.find({ admins: userId }).fetch(), '_id');
         var groupsIds = _.pluck(orion.entities.groups.collection.find({ community: { $in: communitiesIds } }).fetch(), '_id');
         return { group: { $in: groupsIds } };
     },
     create: function(userId, doc) {
+        // They can create events, only if they are admins of a community
         if (orion.entities.communities.collection.find({ admins: userId }).count()) {
             return true;
         }
         return false;
     },
     remove: function(userId, doc) {
+        // They can only remove community events
         var communitiesIds = _.pluck(orion.entities.communities.collection.find({ admins: userId }).fetch(), '_id');
         var groupsIds = _.pluck(orion.entities.groups.collection.find({ community: { $in: communitiesIds } }).fetch(), '_id');
         return _.contains(groupsIds, doc.group);
     }
 });
 
+// We will create a permission for possible event host
 orion.users.permissions.createCustomEntityPermission({
     entity: 'events',
     name: 'possible-host',
     indexFilter: function(userId) {
+        // They can only see events that they are hosting
         return { host: userId };
     },
     update: function(userId, doc, fields, modifier) {
+        // They can only edit events that they are hosting
         return { host: userId };
     },
     create: function(userId, doc) {
+        // They can't create events
         return false;
     },
     remove: function(userId, doc) {
+        // They can't delete events
         return false;
     },
     fields: function(userId) {
+        // The fields that hosts can edit
         return ['name', 'slug', 'privacy', 'location', 'startsAt', 'endsAt', 'invitations', 'rsvpYes', 'rsvpNo'];
     }
 });
 
+// Helpers for events
 orion.entities.events.collection.helpers({
     getUrl: function() {
         var group = orion.entities.groups.collection.findOne(this.group);

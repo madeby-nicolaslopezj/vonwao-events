@@ -8,5 +8,13 @@ Template.eventAdminActions.events({
 				alert('Reminder sent');
 			}
 		});
+	},
+	'click .invite-group-subscribers-btn': function() {
+		Meteor.call('inviteGroupSubscribersToEvent', { eventId: this._id }, function(error, response) {
+			if (error) {
+				console.log(error);
+				alert(error.reason);
+			}
+		});
 	}
 });
