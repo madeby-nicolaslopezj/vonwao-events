@@ -21,3 +21,12 @@ Meteor.startup(function () {
 		layoutTemplate: 'layout',
 	});
 });
+
+/**
+ * Send emails to invitees in the admin
+ */
+Router.route('/admin/e/events/:_id/send-email', {
+	name: 'sendEmailToInvitees',
+	controller: orion.RouteController,  
+	onBeforeAction: orion.users.ensureRoutePermissions('entity.events')
+});

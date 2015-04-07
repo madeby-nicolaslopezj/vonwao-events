@@ -1,4 +1,16 @@
 <template name="eventAdminActions">
-	<button class="btn btn-default btn-xs send-reminder-btn">Send Reminder</button>
-	<button class="btn btn-default btn-xs invite-group-subscribers-btn">Invite Group Subscribers</button>
+	<div class="btn-group">
+		<button class="btn btn-default btn-xs send-reminder-btn" title="Send Reminder">
+			<i class="fa fa-clock-o"></i>
+		</button>
+		<a href="{{ pathFor 'sendEmailToInvitees' }}" class="btn btn-default btn-xs" title="Send emails to invitees">
+			<i class="fa fa-envelope"></i>
+		</a>
+		<button class="btn btn-default btn-xs invite-group-subscribers-btn" title="Invite Group Subscribers">
+			<i class="fa fa-user-plus"></i>
+		</button>
+		<button class="btn btn-default btn-xs duplicate-btn" title="Duplicate Event">
+			<i class="fa fa-files-o"></i>
+		</button>
+	</div>
 </template>

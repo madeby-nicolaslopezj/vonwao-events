@@ -18,7 +18,7 @@ Meteor.methods({
         var groupsIds = _.pluck(orion.entities.groups.collection.find({ community: { $in: communitiesIds } }).fetch(), '_id') || [];
 		var event = orion.entities.events.collection.findOne({ _id: options.eventId, $or: [ { group: { $in: groupsIds } }, { host: this.userId } ] });
 		if (!event) {
-			throw new Meteor.Error('not-found', 'Event not found');
+			throw new Meteor.Error('no-permissions', 'You have no permissions to perform this action');
 		}
 
 		// the user has permissions, now we get the subscribers

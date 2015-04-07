@@ -240,3 +240,24 @@ orion.entities.events.collection.helpers({
     }
 });
 
+
+/**
+ * Email to invitees schema. This is just for the autoform
+ */
+EmailToInviteesSchema = new SimpleSchema({
+    subject: {
+        type: String,
+    },
+    content: orion.attribute('froala', {
+        label: 'Content'
+    }),
+    sendToInvited: {
+        type: Boolean,
+        label: 'Send email to invited people'
+    },
+    sendToRsvpYes: {
+        type: Boolean,
+        label: 'Send email to people going to the event'
+    },
+})
+
