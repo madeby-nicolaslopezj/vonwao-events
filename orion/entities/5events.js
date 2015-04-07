@@ -10,11 +10,11 @@ orion.addEntity('events', {
     },
     group: orion.attribute('hasOne', {
         label: 'Group',
-        optional: true,
     }, {
         entity: 'groups',
         titleField: 'name',
         publicationName: 'eventsGroupsPubAdmin',
+        aditionalFields: ['community'],
         filter: function(userId) {
             var communitiesId = _.pluck(orion.entities.communities.collection.find({ admins: userId }).fetch(), '_id');
             return { community: { $in: communitiesId } };
@@ -37,6 +37,30 @@ orion.addEntity('events', {
             }
         }
     },
+    invitationTemplate: orion.attribute('hasOne', {
+        label: 'Invitation Email Template',
+        optional: true,
+    }, {
+        entity: 'emailTemplates',
+        titleField: 'name',
+        publicationName: 'emailTemplatesInvitationPub',
+        aditionalFields: ['type'],
+        filter: function() {
+            return { type: 'invitation' };
+        }
+    }),
+    reminderTemplate: orion.attribute('hasOne', {
+        label: 'Reminder Email Template',
+        optional: true,
+    }, {
+        entity: 'emailTemplates',
+        titleField: 'name',
+        publicationName: 'emailTemplatesReminderPub',
+        aditionalFields: ['type'],
+        filter: function() {
+            return { type: 'reminder' };
+        }
+    }),
     location: {
         type: String,
     },
@@ -100,6 +124,7 @@ orion.addEntity('events', {
         orion.attributeColumn('hasMany', 'invitations', 'Invitations'),
         orion.attributeColumn('users', 'rsvpYes', 'RSVP Yes'),
         orion.attributeColumn('users', 'rsvpNo', 'RSVP No'),
+        { tmpl: Meteor.isClient && Template.eventAdminActions, title: 'Actions' }
     ],
 });
 
@@ -128,3 +153,67 @@ orion.users.permissions.createCustomEntityPermission({
         return _.contains(groupsIds, doc.group);
     }
 });
+
+orion.users.permissions.createCustomEntityPermission({
+    entity: 'events',
+    name: 'possible-host',
+    indexFilter: function(userId) {
+        return { host: userId };
+    },
+    update: function(userId, doc, fields, modifier) {
+        return { host: userId };
+    },
+    create: function(userId, doc) {
+        return false;
+    },
+    remove: function(userId, doc) {
+        return false;
+    },
+    fields: function(userId) {
+        return ['name', 'slug', 'privacy', 'location', 'startsAt', 'endsAt', 'invitations', 'rsvpYes', 'rsvpNo'];
+    }
+});
+
+orion.entities.events.collection.helpers({
+    getUrl: function() {
+        var group = orion.entities.groups.collection.findOne(this.group);
+        var community = orion.entities.communities.collection.findOne(group.community);
+        return Router.url('event', { slug: this.slug, groupSlug: group.slug, communitySlug: community.slug });
+    },
+    isPublic: function () {
+        return this.privacy == 'public';
+    },
+    isOpenInvite: function() {
+        return this.privacy == 'open-invite';
+    },
+    isInviteOnly: function() {
+        return this.privacy == 'invite-only';
+    },
+    userIsInvitedOrRsvp: function(userId) {
+        return this.userRsvp(userId) || this.userIsInvited(userId);
+    },
+    userIsInvited: function(userId) {
+        if (!userId) return false;
+        var event = this;
+        var found = false;
+        // If we call this from the client we must be subscribed to the user emails, 
+        // this is automatically done with the logged in user, but we may have problems
+        // if we check for others users without subscribing.
+        orion.entities.emails.collection.find({ userId: userId }).forEach(function (item) {
+            if (_.contains(event.invitations, item._id)) {
+                found = true;
+            }
+        });
+        return found;
+    },
+    userRsvp: function(userId) {
+        return this.userRsvpYes(userId) || this.userRsvpNo(userId);
+    },
+    userRsvpYes: function(userId) {
+        return _.contains(this.rsvpYes, userId)
+    },
+    userRsvpNo: function(userId) {
+        return _.contains(this.rsvpNo, userId)
+    }
+});
+

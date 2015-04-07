@@ -1,0 +1,18 @@
+<template name="community">
+	<ol class="breadcrumb">
+		<li class="active">{{ community.name }}</li>
+	</ol>
+	<h3 class="text-center">{{ community.name }}</h3>
+	<br>
+	{{# each groups }}
+		{{> communityGroup }}
+	{{/ each }}
+</template>
+
+<template name="communityGroup">
+	<p>
+		<a href="{{ pathFor 'group' communitySlug=communitySlug }}">
+			{{ name }}
+		</a>
+	</p>
+</template>

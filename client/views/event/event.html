@@ -1,0 +1,72 @@
+<template name="event">
+	<ol class="breadcrumb">
+		<li><a href="{{ pathFor 'community' slug=community.slug }}">{{ community.name }}</a></li>
+		<li><a href="{{ pathFor 'group' slug=group.slug communitySlug=community.slug }}">{{ group.name }}</a></li>
+		<li class="active">{{ event.name }}</li>
+	</ol>
+	<h3 class="text-center">{{ event.name }}</h3>
+	<br>
+	<p>
+		<b>Starts At:</b>
+		{{ event.startsAt }}
+	</p>
+	<p>
+		<b>Ends At:</b>
+		{{ event.endsAt }}
+	</p>
+	<p>
+		{{ getCountOf array=event.invitations singular="invitation" plural="invitations" }}, 
+		{{ getCountOf array=event.rsvpYes singular="person is" plural="persons are" }} going and
+		{{ getCountOf array=event.rsvpNo singular="person is" plural="persons are" }} not going.
+	</p>
+	<hr>
+	{{# unless currentUser }}
+		<p>Login to check if you have an invitation.</p>
+		<p>
+			<a href="{{ pathFor 'login' query=getLoginQuery }}" class="btn btn-primary btn-block">Login</a>
+		</p>
+	{{/ unless }}
+	{{# if userIsInvitedOrRsvp }}
+		{{# if userIsInvited }}
+			<div class="row">
+				<div class="col-sm-6">
+					<button class="btn btn-primary btn-block rsvp-yes-btn">Accept</button>
+				</div>
+				<div class="col-sm-6">
+					<button class="btn btn-danger btn-block rsvp-no-btn">Deny</button>
+				</div>
+			</div>
+		{{/ if }}
+		{{# if userRsvpYes }}
+			<p><b>You are going to this event</b></p>
+			<p>
+				<button class="btn btn-danger btn-block rsvp-no-btn">Cancel</button>
+			</p>
+		{{/ if }}
+		{{# if userRsvpNo }}
+			<p><b>You are not going to this event</b></p>
+			<p>
+				<button class="btn btn-primary btn-block rsvp-yes-btn">Join the event</button>
+			</p>
+		{{/ if }}
+		{{# if event.isOpenInvite }}
+			<hr>
+			<p><b>You can invite people to this event</b></p>
+			<div class="form-group">
+				<div class="input-group">
+					<input class="form-control invite-email-input" type="email" placeholder="Write a email">
+					<span class="input-group-btn">
+						<button class="btn btn-default invite-btn">Invite</button>
+					</span>
+				</div>
+			</div>
+		{{/ if }}
+	{{ else }}
+		{{# if event.isPublic }}
+			<p><b>This event is public</b></p>
+			<p>
+				<button class="btn btn-primary btn-block join-event-btn">Join</button>
+			</p>
+		{{/ if }}
+	{{/ if }}
+</template>

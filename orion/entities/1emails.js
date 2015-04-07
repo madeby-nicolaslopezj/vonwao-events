@@ -23,3 +23,10 @@ orion.addEntity('emails', {
         orion.attributeColumn('user', 'userId', 'User'),
     ],
 });
+
+// null beacouse the client its automatically subscribed
+if (Meteor.isServer) {
+    Meteor.publish(null, function() {
+        return orion.entities.emails.collection.find({ userId: this.userId });
+    })
+}

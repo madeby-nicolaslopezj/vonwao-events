@@ -16,9 +16,16 @@ Meteor.methods({
 		var emailId = email && email._id;
 
 		// Check if the users has responded
-		if (email.userId) {
+		if (email && email.userId) {
 			if (_.contains(event.rsvpYes, email.userId) || _.contains(event.rsvpNo, email.userId)) {
-				throw new Meteor.Error('user-has-responded', 'The user has responded to the invitation');
+				throw new Meteor.Error('user-has-responded', 'This person has responded to a invitation of this event.');
+			}
+		}
+
+		// Check if the user is invited
+		if (emailId) {
+			if (_.contains(event.invitations, emailId)) {
+				throw new Meteor.Error('user-has-invitation', 'This person has a pending invitation.');
 			}
 		}
 
@@ -42,8 +49,8 @@ Meteor.methods({
 					found = true;
 				}
 			});
-			// Check if the user has responded yes
-			if (_.contains(event.rsvpYes, this.userId)) {
+			// Check if the user has responded
+			if (_.contains(event.rsvpYes, this.userId) || _.contains(event.rsvpNo, this.userId)) {
 				found = true;
 			}
 			if (!found) {

@@ -11,11 +11,11 @@ orion.addEntity('groups', {
     },
     community: orion.attribute('hasOne', {
         label: 'Community',
-        optional: true,
     }, {
         entity: 'communities',
         titleField: 'name',
         publicationName: 'groupsCommunitiesPubAdmin',
+        aditionalFields: ['admins'],
         filter: function(userId) {
             return { admins: userId };
         }
@@ -26,8 +26,7 @@ orion.addEntity('groups', {
             noselect: true,
             options: {
                 'public': 'Public: Anyone can join',
-                'open-invite': 'Open Invite: Anyone invited can invite other friends by email',
-                'invite-only': 'Invite Only: Only the communities admins can add additional people',
+                'closed': 'Closed: only admin can add people to groups',
             }
         }
     },
@@ -74,5 +73,17 @@ orion.users.permissions.createCustomEntityPermission({
     remove: function(userId, doc) {
         var communitiesIds = _.pluck(orion.entities.communities.collection.find({ admins: userId }).fetch(), '_id');
         return _.contains(communitiesIds, doc.community);
+    },
+    fields: function(userId) {
+        return ['name', 'slug', 'privacy', 'subscribers'];
+    }
+});
+
+orion.entities.groups.collection.helpers({
+    isPublic: function () {
+        return this.privacy == 'public';
+    },
+    userIsSubscribed: function(userId) {
+        return _.contains(this.subscribers, userId);
     }
 });

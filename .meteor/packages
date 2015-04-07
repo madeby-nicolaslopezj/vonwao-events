@@ -11,7 +11,10 @@ orionjs:filesystem
 orionjs:s3
 orionjs:users-attribute
 orionjs:relationships
+orionjs:froala-editor
 twbs:bootstrap
 fortawesome:fontawesome
 tsega:bootstrap3-datetimepicker@=3.1.3_3
 aldeed:autoform-bs-datetimepicker
+matb33:collection-hooks
+email

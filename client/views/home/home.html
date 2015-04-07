@@ -1,0 +1,14 @@
+<template name="home">
+	<h3>Communities</h3>
+	{{# each communities }}
+		{{> homeCommunities }}
+	{{/ each }}
+</template>
+
+<template name="homeCommunities">
+	<p>
+		<a href="{{ pathFor 'community' }}">
+			{{ name }}
+		</a>
+	</p>
+</template>

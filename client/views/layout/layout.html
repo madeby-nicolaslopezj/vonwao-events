@@ -1,0 +1,10 @@
+<template name="layout">
+	<div class="container-fluid">
+		<div class="col-md-4 col-md-offset-4 col-sm-6 col-sm-offset-3">
+			<h1><a href="{{ pathFor 'home' }}">{{ dict 'siteName' }}</a></h1>
+			<hr>
+			{{> yield }}
+		</div>
+	</div>
+	
+</template>
