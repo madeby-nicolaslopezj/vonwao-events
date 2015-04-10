@@ -1,0 +1,32 @@
+<template name="invitation">
+  {{#if Template.subscriptionsReady}}
+    {{# if isInvitedOrRsvp }}
+      <h3 class="text-center">{{ event.name }}</h3>
+      <br>
+      {{# unless currentUser }}
+        <p class="text-center"><b>You are invited to this event</b></p>
+        <p>
+          <a href="{{ pathFor 'login' query=getLoginQuery }}" class="btn btn-primary btn-block">Login or create a account with this email</a>
+        </p>
+      {{ else }}
+        {{# if emailDoesntMatch }}
+          <p class="text-center"><b>This invitation is not for this account</b></p>
+          <p>
+            <a class="btn btn-danger btn-block btn-logout">Logout</a>
+          </p>
+        {{ else }}
+          <p class="text-center">Redirecting...</p>
+        {{/ if }}
+      {{/ unless }}
+    {{ else }}
+      {{# unless event }}
+        <p><b>Event not found</b></p>
+      {{/ unless }}
+      {{# unless email }}
+        <p><b>Invitation not found</b></p>
+      {{/ unless }}
+    {{/ if }}
+  {{ else }}
+    <p><b>Loading...</b></p>
+  {{/ if }}
+</template>

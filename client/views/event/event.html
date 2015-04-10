@@ -63,10 +63,12 @@
 		{{/ if }}
 	{{ else }}
 		{{# if event.isPublic }}
-			<p><b>This event is public</b></p>
-			<p>
-				<button class="btn btn-primary btn-block join-event-btn">Join</button>
-			</p>
+			{{# if currentUser }}
+				<p><b>This event is public</b></p>
+				<p>
+					<button class="btn btn-primary btn-block join-event-btn">Join</button>
+				</p>
+			{{/ if }}
 		{{/ if }}
 	{{/ if }}
 </template>

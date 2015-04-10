@@ -14,24 +14,25 @@ orion.entities.events.collection.after.update(function (userId, doc, fieldNames,
 	// We will get the event becouse using the provided "doc" we can't have the collection helpers we defined
 	var doc = orion.entities.events.collection.findOne(doc._id);
 	// Get the email address of the invited people
-	var emails = _.pluck(orion.entities.emails.collection.find({ _id: { $in: newIds } }).fetch(), 'email');
+	var emails = orion.entities.emails.collection.find({ _id: { $in: newIds } });
 	// Get the template
 	var invitationTemplate = orion.entities.emailTemplates.collection.findOne(doc.invitationTemplate);
 
-	// We will add the url to the event object to use it in the email
-	doc.url = doc.getStaticUrl();
-	// Converts the template to html using the specified entity.
-	// Notice: this is not blaze, this just uses a string.replace, so we have some rules
-	// 1 - No spaces between braces. Like this: {{name}}
-	// 2 - No functions, helpers, the parser will only recognize the attributes of the current event
-	var html = invitationTemplate.getHtml(doc);
-
 	emails.map(function(email) {
+
+		// We will add the url to the event object to use it in the email
+		doc.url = doc.getInvitationUrl(email._id);
+		// Converts the template to html using the specified entity.
+		// Notice: this is not blaze, this just uses a string.replace, so we have some rules
+		// 1 - No spaces between braces. Like this: {{name}}
+		// 2 - No functions, helpers, the parser will only recognize the attributes of the current event
+		var html = invitationTemplate.getHtml(doc);
+
 		// Send the email one by one
 		// We do it this way to prevent that recipents see everyone email address
 		Email.send({
 			from: orion.config.get('MAIL_FROM'),
-			to: email,
+			to: email.email,
 			subject: 'You are invited to ' + doc.name,
 			html: html
 		})

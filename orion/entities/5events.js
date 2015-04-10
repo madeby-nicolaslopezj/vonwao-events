@@ -206,6 +206,9 @@ orion.entities.events.collection.helpers({
 	getStaticUrl: function() {
 		return Router.url('event.static', { _id: this._id });
 	},
+	getInvitationUrl: function(emailId) {
+		return Router.url('invitation', { eventId: this._id, emailId: emailId });
+	},
 	isPublic: function () {
 		return this.privacy == 'public';
 	},

@@ -22,6 +22,11 @@ Meteor.startup(function () {
 	});
 });
 
+Router.route('/invitation/:eventId/:emailId', {
+	name: 'invitation',
+	layoutTemplate: 'layout',
+});
+
 Router.route('/event/:_id', function(){
 	var router = this;
 	Meteor.call('getEventUrl', this.params._id, function(error, result) {
